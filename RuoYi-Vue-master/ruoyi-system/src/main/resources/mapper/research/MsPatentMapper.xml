@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsPatentMapper">
+
+    <resultMap type="MsPatent" id="MsPatentResult">
+        <result property="patentId"        column="patent_id"         />
+        <result property="patentName"      column="patent_name"       />
+        <result property="gradeId"         column="grade_id"          />
+        <result property="gradeName"       column="grade_name"        />
+        <result property="gradeCode"       column="grade_code"        />
+        <result property="professorId"     column="professor_id"      />
+        <result property="professorName"   column="professor_name"    />
+        <result property="inventorRank"    column="inventor_rank"     />
+        <result property="patentNumber"    column="patent_number"     />
+        <result property="patentCountry"   column="patent_country"    />
+        <result property="applicationDate" column="application_date"  />
+        <result property="grantDate"       column="grant_date"        />
+        <result property="actualScore"     column="actual_score"      />
+        <result property="status"          column="status"            />
+        <result property="createBy"        column="create_by"         />
+        <result property="createTime"      column="create_time"       />
+        <result property="updateBy"        column="update_by"         />
+        <result property="updateTime"      column="update_time"       />
+        <result property="remark"          column="remark"            />
+    </resultMap>
+
+    <sql id="selectMsPatentVo">
+        select p.patent_id, p.patent_name, p.grade_id, g.grade_name, g.grade_code, p.professor_id, r.name as professor_name,
+               p.inventor_rank, p.patent_number, p.patent_country, p.application_date, p.grant_date,
+               p.actual_score, p.status, p.create_by, p.create_time, p.update_by, p.update_time, p.remark
+        from ms_patent p
+        left join ms_patent_grade g on p.grade_id = g.grade_id
+        left join ms_professor r on p.professor_id = r.professor_id
+    </sql>
+
+    <select id="selectMsPatentList" parameterType="MsPatent" resultMap="MsPatentResult">
+        <include refid="selectMsPatentVo"/>
+        <where>
+            <if test="patentName != null and patentName != ''"> and p.patent_name like concat('%', #{patentName}, '%')</if>
+            <if test="gradeId != null"> and p.grade_id = #{gradeId}</if>
+            <if test="professorId != null"> and p.professor_id = #{professorId}</if>
+            <if test="patentNumber != null and patentNumber != ''"> and p.patent_number like concat('%', #{patentNumber}, '%')</if>
+            <if test="status != null and status != ''"> and p.status = #{status}</if>
+        </where>
+        order by p.grant_date desc
+    </select>
+
+    <select id="selectMsPatentByPatentId" parameterType="Long" resultMap="MsPatentResult">
+        <include refid="selectMsPatentVo"/> where p.patent_id = #{patentId}
+    </select>
+
+    <insert id="insertMsPatent" parameterType="MsPatent" useGeneratedKeys="true" keyProperty="patentId">
+        insert into ms_patent
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patentName != null">patent_name,</if>
+            <if test="gradeId != null">grade_id,</if>
+            <if test="professorId != null">professor_id,</if>
+            <if test="inventorRank != null">inventor_rank,</if>
+            <if test="patentNumber != null">patent_number,</if>
+            <if test="patentCountry != null">patent_country,</if>
+            <if test="applicationDate != null">application_date,</if>
+            <if test="grantDate != null">grant_date,</if>
+            <if test="actualScore != null">actual_score,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patentName != null">#{patentName},</if>
+            <if test="gradeId != null">#{gradeId},</if>
+            <if test="professorId != null">#{professorId},</if>
+            <if test="inventorRank != null">#{inventorRank},</if>
+            <if test="patentNumber != null">#{patentNumber},</if>
+            <if test="patentCountry != null">#{patentCountry},</if>
+            <if test="applicationDate != null">#{applicationDate},</if>
+            <if test="grantDate != null">#{grantDate},</if>
+            <if test="actualScore != null">#{actualScore},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMsPatent" parameterType="MsPatent">
+        update ms_patent
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patentName != null">patent_name = #{patentName},</if>
+            <if test="gradeId != null">grade_id = #{gradeId},</if>
+            <if test="professorId != null">professor_id = #{professorId},</if>
+            <if test="inventorRank != null">inventor_rank = #{inventorRank},</if>
+            <if test="patentNumber != null">patent_number = #{patentNumber},</if>
+            <if test="patentCountry != null">patent_country = #{patentCountry},</if>
+            <if test="applicationDate != null">application_date = #{applicationDate},</if>
+            <if test="grantDate != null">grant_date = #{grantDate},</if>
+            <if test="actualScore != null">actual_score = #{actualScore},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where patent_id = #{patentId}
+    </update>
+
+    <delete id="deleteMsPatentByPatentId" parameterType="Long">
+        delete from ms_patent where patent_id = #{patentId}
+    </delete>
+
+    <delete id="deleteMsPatentByPatentIds" parameterType="String">
+        delete from ms_patent where patent_id in
+        <foreach item="patentId" collection="array" open="(" separator="," close=")">#{patentId}</foreach>
+    </delete>
+
+    <delete id="deleteMsPatentByProfessorId" parameterType="Long">
+        delete from ms_patent where professor_id = #{professorId}
+    </delete>
+
+</mapper>

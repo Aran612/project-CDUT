@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsPaperGradeMapper">
+
+    <resultMap type="MsPaperGrade" id="MsPaperGradeResult">
+        <result property="gradeId"       column="grade_id"        />
+        <result property="gradeCode"     column="grade_code"      />
+        <result property="gradeName"     column="grade_name"      />
+        <result property="baseScore"     column="base_score"      />
+        <result property="sortOrder"          column="sort_order"           />
+        <result property="forEvaluationOnly" column="for_evaluation_only" />
+        <result property="status"             column="status"               />
+        <result property="createBy"      column="create_by"       />
+        <result property="createTime"    column="create_time"     />
+        <result property="updateBy"      column="update_by"       />
+        <result property="updateTime"    column="update_time"     />
+        <result property="remark"        column="remark"          />
+    </resultMap>
+
+    <sql id="selectMsPaperGradeVo">
+        select grade_id, grade_code, grade_name, base_score, sort_order, for_evaluation_only, status, create_by, create_time, update_by, update_time, remark
+        from ms_paper_grade
+    </sql>
+
+    <select id="selectMsPaperGradeList" parameterType="MsPaperGrade" resultMap="MsPaperGradeResult">
+        <include refid="selectMsPaperGradeVo"/>
+        <where>
+            <if test="gradeCode != null  and gradeCode != ''"> and grade_code like concat('%', #{gradeCode}, '%')</if>
+            <if test="gradeName != null  and gradeName != ''"> and grade_name like concat('%', #{gradeName}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by sort_order asc
+    </select>
+
+    <select id="selectMsPaperGradeAll" resultMap="MsPaperGradeResult">
+        <include refid="selectMsPaperGradeVo"/>
+        where status = '0'
+        order by sort_order asc
+    </select>
+
+    <select id="selectMsPaperGradeByGradeId" parameterType="Long" resultMap="MsPaperGradeResult">
+        <include refid="selectMsPaperGradeVo"/>
+        where grade_id = #{gradeId}
+    </select>
+
+    <select id="selectMsPaperGradeByGradeCode" parameterType="String" resultMap="MsPaperGradeResult">
+        <include refid="selectMsPaperGradeVo"/>
+        where grade_code = #{gradeCode}
+    </select>
+
+    <select id="selectMsPaperGradeByGradeName" parameterType="String" resultMap="MsPaperGradeResult">
+        <include refid="selectMsPaperGradeVo"/>
+        where grade_name = #{gradeName}
+    </select>
+
+    <insert id="insertMsPaperGrade" parameterType="MsPaperGrade" useGeneratedKeys="true" keyProperty="gradeId">
+        insert into ms_paper_grade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gradeCode != null and gradeCode != ''">grade_code,</if>
+            <if test="gradeName != null and gradeName != ''">grade_name,</if>
+            <if test="baseScore != null">base_score,</if>
+            <if test="sortOrder != null">sort_order,</if>
+            <if test="forEvaluationOnly != null and forEvaluationOnly != ''">for_evaluation_only,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gradeCode != null and gradeCode != ''">#{gradeCode},</if>
+            <if test="gradeName != null and gradeName != ''">#{gradeName},</if>
+            <if test="baseScore != null">#{baseScore},</if>
+            <if test="sortOrder != null">#{sortOrder},</if>
+            <if test="forEvaluationOnly != null and forEvaluationOnly != ''">#{forEvaluationOnly},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMsPaperGrade" parameterType="MsPaperGrade">
+        update ms_paper_grade
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="gradeCode != null and gradeCode != ''">grade_code = #{gradeCode},</if>
+            <if test="gradeName != null and gradeName != ''">grade_name = #{gradeName},</if>
+            <if test="baseScore != null">base_score = #{baseScore},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="forEvaluationOnly != null and forEvaluationOnly != ''">for_evaluation_only = #{forEvaluationOnly},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where grade_id = #{gradeId}
+    </update>
+
+    <delete id="deleteMsPaperGradeByGradeId" parameterType="Long">
+        delete from ms_paper_grade where grade_id = #{gradeId}
+    </delete>
+
+    <delete id="deleteMsPaperGradeByGradeIds" parameterType="String">
+        delete from ms_paper_grade where grade_id in
+        <foreach item="gradeId" collection="array" open="(" separator="," close=")">
+            #{gradeId}
+        </foreach>
+    </delete>
+
+</mapper>

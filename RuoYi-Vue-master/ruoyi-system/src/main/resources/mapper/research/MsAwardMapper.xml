@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsAwardMapper">
+    <resultMap type="MsAward" id="MsAwardResult">
+        <result property="awardId" column="award_id"/>
+        <result property="awardName" column="award_name"/>
+        <result property="gradeId" column="grade_id"/>
+        <result property="gradeName" column="grade_name"/>
+        <result property="professorId" column="professor_id"/>
+        <result property="professorName" column="professor_name"/>
+        <result property="awardRank" column="award_rank"/>
+        <result property="awardOrg" column="award_org"/>
+        <result property="awardDate" column="award_date"/>
+        <result property="certNumber" column="cert_number"/>
+        <result property="actualScore" column="actual_score"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <sql id="vo">
+        select a.award_id, a.award_name, a.grade_id, g.grade_name, a.professor_id, r.name professor_name,
+               a.award_rank, a.award_org, a.award_date, a.cert_number,
+               a.actual_score, a.status, a.create_by, a.create_time, a.update_by, a.update_time, a.remark
+        from ms_award a left join ms_award_grade g on a.grade_id=g.grade_id left join ms_professor r on a.professor_id=r.professor_id
+    </sql>
+    <select id="selectMsAwardList" parameterType="MsAward" resultMap="MsAwardResult">
+        <include refid="vo"/><where>
+        <if test="awardName!=null and awardName!=''">and a.award_name like concat('%',#{awardName},'%')</if>
+        <if test="gradeId!=null">and a.grade_id=#{gradeId}</if>
+        <if test="professorId!=null">and a.professor_id=#{professorId}</if>
+        <if test="status!=null and status!=''">and a.status=#{status}</if></where> order by a.award_date desc
+    </select>
+    <select id="selectMsAwardByAwardId" parameterType="Long" resultMap="MsAwardResult"><include refid="vo"/> where a.award_id=#{awardId}</select>
+    <insert id="insertMsAward" parameterType="MsAward" useGeneratedKeys="true" keyProperty="awardId">
+        insert into ms_award<trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="awardName!=null">award_name,</if><if test="gradeId!=null">grade_id,</if><if test="professorId!=null">professor_id,</if>
+        <if test="awardRank!=null">award_rank,</if><if test="awardOrg!=null">award_org,</if><if test="awardDate!=null">award_date,</if>
+        <if test="certNumber!=null">cert_number,</if><if test="actualScore!=null">actual_score,</if>
+        <if test="status!=null">status,</if><if test="createBy!=null">create_by,</if><if test="createTime!=null">create_time,</if><if test="remark!=null">remark,</if></trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="awardName!=null">#{awardName},</if><if test="gradeId!=null">#{gradeId},</if><if test="professorId!=null">#{professorId},</if>
+        <if test="awardRank!=null">#{awardRank},</if><if test="awardOrg!=null">#{awardOrg},</if><if test="awardDate!=null">#{awardDate},</if>
+        <if test="certNumber!=null">#{certNumber},</if><if test="actualScore!=null">#{actualScore},</if>
+        <if test="status!=null">#{status},</if><if test="createBy!=null">#{createBy},</if><if test="createTime!=null">#{createTime},</if><if test="remark!=null">#{remark},</if></trim>
+    </insert>
+    <update id="updateMsAward" parameterType="MsAward">
+        update ms_award<trim prefix="SET" suffixOverrides=",">
+        <if test="awardName!=null">award_name=#{awardName},</if><if test="gradeId!=null">grade_id=#{gradeId},</if><if test="professorId!=null">professor_id=#{professorId},</if>
+        <if test="awardRank!=null">award_rank=#{awardRank},</if><if test="awardOrg!=null">award_org=#{awardOrg},</if><if test="awardDate!=null">award_date=#{awardDate},</if>
+        <if test="certNumber!=null">cert_number=#{certNumber},</if><if test="actualScore!=null">actual_score=#{actualScore},</if>
+        <if test="status!=null">status=#{status},</if><if test="updateBy!=null">update_by=#{updateBy},</if><if test="updateTime!=null">update_time=#{updateTime},</if><if test="remark!=null">remark=#{remark},</if></trim>
+        where award_id=#{awardId}
+    </update>
+    <delete id="deleteMsAwardByAwardId" parameterType="Long">delete from ms_award where award_id=#{awardId}</delete>
+    <delete id="deleteMsAwardByAwardIds" parameterType="String">delete from ms_award where award_id in<foreach item="id" collection="array" open="(" separator="," close=")">#{id}</foreach></delete>
+    <delete id="deleteMsAwardByProfessorId" parameterType="Long">delete from ms_award where professor_id = #{professorId}</delete>
+</mapper>

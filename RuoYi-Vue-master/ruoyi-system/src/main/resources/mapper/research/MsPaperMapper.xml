@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsPaperMapper">
+
+    <resultMap type="MsPaper" id="MsPaperResult">
+        <result property="paperId"        column="paper_id"         />
+        <result property="title"          column="title"            />
+        <result property="gradeId"        column="grade_id"         />
+        <result property="gradeName"           column="grade_name"            />
+        <result property="forEvaluationOnly"  column="for_evaluation_only"   />
+        <result property="professorId"    column="professor_id"     />
+        <result property="professorName"  column="professor_name"   />
+        <result property="authorPosition" column="author_position"  />
+        <result property="journalName"    column="journal_name"     />
+        <result property="publishDate"    column="publish_date"     />
+        <result property="doi"            column="doi"              />
+        <result property="paperUrl"       column="paper_url"        />
+        <result property="abstractText"   column="abstract_text"    />
+        <result property="actualScore"    column="actual_score"     />
+        <result property="status"         column="status"           />
+        <result property="createBy"       column="create_by"        />
+        <result property="createTime"     column="create_time"      />
+        <result property="updateBy"       column="update_by"        />
+        <result property="updateTime"     column="update_time"      />
+        <result property="remark"         column="remark"           />
+    </resultMap>
+
+    <sql id="selectMsPaperVo">
+        select p.paper_id, p.title, p.grade_id, g.grade_name, g.for_evaluation_only, p.professor_id, r.name as professor_name,
+               p.author_position, p.journal_name, p.publish_date, p.doi, p.paper_url, p.abstract_text,
+               p.actual_score, p.status, p.create_by, p.create_time, p.update_by, p.update_time, p.remark
+        from ms_paper p
+        left join ms_paper_grade g on p.grade_id = g.grade_id
+        left join ms_professor r on p.professor_id = r.professor_id
+    </sql>
+
+    <select id="selectMsPaperList" parameterType="MsPaper" resultMap="MsPaperResult">
+        <include refid="selectMsPaperVo"/>
+        <where>
+            <if test="title != null  and title != ''"> and p.title like concat('%', #{title}, '%')</if>
+            <if test="gradeId != null"> and p.grade_id = #{gradeId}</if>
+            <if test="professorId != null"> and p.professor_id = #{professorId}</if>
+            <if test="professorName != null  and professorName != ''"> and r.name like concat('%', #{professorName}, '%')</if>
+            <if test="authorPosition != null  and authorPosition != ''"> and p.author_position = #{authorPosition}</if>
+            <if test="journalName != null  and journalName != ''"> and p.journal_name like concat('%', #{journalName}, '%')</if>
+            <if test="publishDate != null"> and p.publish_date = #{publishDate}</if>
+            <if test="doi != null  and doi != ''"> and p.doi = #{doi}</if>
+            <if test="status != null  and status != ''"> and p.status = #{status}</if>
+        </where>
+        order by p.publish_date desc, p.paper_id desc
+    </select>
+
+    <select id="selectMsPaperByPaperId" parameterType="Long" resultMap="MsPaperResult">
+        <include refid="selectMsPaperVo"/>
+        where p.paper_id = #{paperId}
+    </select>
+
+    <insert id="insertMsPaper" parameterType="MsPaper" useGeneratedKeys="true" keyProperty="paperId">
+        insert into ms_paper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="gradeId != null">grade_id,</if>
+            <if test="professorId != null">professor_id,</if>
+            <if test="authorPosition != null">author_position,</if>
+            <if test="journalName != null">journal_name,</if>
+            <if test="publishDate != null">publish_date,</if>
+            <if test="doi != null">doi,</if>
+            <if test="paperUrl != null">paper_url,</if>
+            <if test="abstractText != null">abstract_text,</if>
+            <if test="actualScore != null">actual_score,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="gradeId != null">#{gradeId},</if>
+            <if test="professorId != null">#{professorId},</if>
+            <if test="authorPosition != null">#{authorPosition},</if>
+            <if test="journalName != null">#{journalName},</if>
+            <if test="publishDate != null">#{publishDate},</if>
+            <if test="doi != null">#{doi},</if>
+            <if test="paperUrl != null">#{paperUrl},</if>
+            <if test="abstractText != null">#{abstractText},</if>
+            <if test="actualScore != null">#{actualScore},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMsPaper" parameterType="MsPaper">
+        update ms_paper
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="gradeId != null">grade_id = #{gradeId},</if>
+            <if test="professorId != null">professor_id = #{professorId},</if>
+            <if test="authorPosition != null">author_position = #{authorPosition},</if>
+            <if test="journalName != null">journal_name = #{journalName},</if>
+            <if test="publishDate != null">publish_date = #{publishDate},</if>
+            <if test="doi != null">doi = #{doi},</if>
+            <if test="paperUrl != null">paper_url = #{paperUrl},</if>
+            <if test="abstractText != null">abstract_text = #{abstractText},</if>
+            <if test="actualScore != null">actual_score = #{actualScore},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where paper_id = #{paperId}
+    </update>
+
+    <delete id="deleteMsPaperByPaperId" parameterType="Long">
+        delete from ms_paper where paper_id = #{paperId}
+    </delete>
+
+    <delete id="deleteMsPaperByPaperIds" parameterType="String">
+        delete from ms_paper where paper_id in
+        <foreach item="paperId" collection="array" open="(" separator="," close=")">
+            #{paperId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMsPaperByProfessorId" parameterType="Long">
+        delete from ms_paper where professor_id = #{professorId}
+    </delete>
+
+    <select id="countPaperByGrade" parameterType="String" resultType="java.util.Map">
+        select g.grade_id, g.grade_code, g.grade_name, count(p.paper_id) as count, sum(p.actual_score) as total_score
+        from ms_paper_grade g
+        left join ms_paper p on g.grade_id = p.grade_id and p.status = '0'
+        <if test="_parameter != null and _parameter != ''">and year(p.publish_date) = #{_parameter}</if>
+        where g.status = '0'
+        group by g.grade_id, g.grade_code, g.grade_name, g.sort_order
+        order by g.sort_order asc
+    </select>
+
+    <select id="countPaperByEvaluationType" parameterType="String" resultType="java.util.Map">
+        select g.for_evaluation_only,
+               count(p.paper_id) as paper_count,
+               coalesce(sum(p.actual_score), 0) as total_score
+        from ms_paper_grade g
+        left join ms_paper p on g.grade_id = p.grade_id and p.status = '0'
+        <if test="_parameter != null and _parameter != ''">and year(p.publish_date) = #{_parameter}</if>
+        where g.status = '0'
+        group by g.for_evaluation_only
+    </select>
+
+    <select id="selectProfessorPaperStats" parameterType="String" resultType="java.util.Map">
+        select r.professor_id, r.name as professor_name, r.department, r.title,
+               count(p.paper_id) as paper_count, coalesce(sum(p.actual_score), 0) as total_score
+        from ms_professor r
+        left join ms_paper p on r.professor_id = p.professor_id and p.status = '0'
+        <if test="_parameter != null and _parameter != ''">
+            and year(p.publish_date) = #{year}
+        </if>
+        where r.status = '0'
+        group by r.professor_id, r.name, r.department, r.title, r.total_score
+        order by total_score desc
+    </select>
+
+</mapper>

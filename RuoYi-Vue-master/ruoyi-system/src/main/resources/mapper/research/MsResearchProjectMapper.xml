@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsResearchProjectMapper">
+
+    <resultMap type="MsResearchProject" id="MsResearchProjectResult">
+        <result property="projectId"       column="project_id"        />
+        <result property="projectName"     column="project_name"      />
+        <result property="gradeId"         column="grade_id"          />
+        <result property="gradeName"       column="grade_name"        />
+        <result property="professorId"     column="professor_id"      />
+        <result property="professorName"   column="professor_name"    />
+        <result property="role"            column="role"              />
+        <result property="fundingAmount"   column="funding_amount"    />
+        <result property="approvalNumber"  column="approval_number"   />
+        <result property="projectSource"   column="project_source"    />
+        <result property="startDate"       column="start_date"        />
+        <result property="endDate"         column="end_date"          />
+        <result property="actualScore"     column="actual_score"      />
+        <result property="status"          column="status"            />
+        <result property="createBy"        column="create_by"         />
+        <result property="createTime"      column="create_time"       />
+        <result property="updateBy"        column="update_by"         />
+        <result property="updateTime"      column="update_time"       />
+        <result property="remark"          column="remark"            />
+    </resultMap>
+
+    <sql id="selectMsResearchProjectVo">
+        select p.project_id, p.project_name, p.grade_id, g.grade_name, p.professor_id, r.name as professor_name,
+               p.role, p.funding_amount, p.approval_number, p.project_source, p.start_date, p.end_date,
+               p.actual_score, p.status, p.create_by, p.create_time, p.update_by, p.update_time, p.remark
+        from ms_research_project p
+        left join ms_project_grade g on p.grade_id = g.grade_id
+        left join ms_professor r on p.professor_id = r.professor_id
+    </sql>
+
+    <select id="selectMsResearchProjectList" parameterType="MsResearchProject" resultMap="MsResearchProjectResult">
+        <include refid="selectMsResearchProjectVo"/>
+        <where>
+            <if test="projectName != null and projectName != ''"> and p.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="gradeId != null"> and p.grade_id = #{gradeId}</if>
+            <if test="professorId != null"> and p.professor_id = #{professorId}</if>
+            <if test="role != null and role != ''"> and p.role = #{role}</if>
+            <if test="approvalNumber != null and approvalNumber != ''"> and p.approval_number like concat('%', #{approvalNumber}, '%')</if>
+            <if test="status != null and status != ''"> and p.status = #{status}</if>
+        </where>
+        order by p.start_date desc
+    </select>
+
+    <select id="selectMsResearchProjectByProjectId" parameterType="Long" resultMap="MsResearchProjectResult">
+        <include refid="selectMsResearchProjectVo"/>
+        where p.project_id = #{projectId}
+    </select>
+
+    <insert id="insertMsResearchProject" parameterType="MsResearchProject" useGeneratedKeys="true" keyProperty="projectId">
+        insert into ms_research_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectName != null and projectName != ''">project_name,</if>
+            <if test="gradeId != null">grade_id,</if>
+            <if test="professorId != null">professor_id,</if>
+            <if test="role != null and role != ''">role,</if>
+            <if test="fundingAmount != null">funding_amount,</if>
+            <if test="approvalNumber != null">approval_number,</if>
+            <if test="projectSource != null">project_source,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="actualScore != null">actual_score,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectName != null and projectName != ''">#{projectName},</if>
+            <if test="gradeId != null">#{gradeId},</if>
+            <if test="professorId != null">#{professorId},</if>
+            <if test="role != null and role != ''">#{role},</if>
+            <if test="fundingAmount != null">#{fundingAmount},</if>
+            <if test="approvalNumber != null">#{approvalNumber},</if>
+            <if test="projectSource != null">#{projectSource},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="actualScore != null">#{actualScore},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMsResearchProject" parameterType="MsResearchProject">
+        update ms_research_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="gradeId != null">grade_id = #{gradeId},</if>
+            <if test="professorId != null">professor_id = #{professorId},</if>
+            <if test="role != null and role != ''">role = #{role},</if>
+            <if test="fundingAmount != null">funding_amount = #{fundingAmount},</if>
+            <if test="approvalNumber != null">approval_number = #{approvalNumber},</if>
+            <if test="projectSource != null">project_source = #{projectSource},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="actualScore != null">actual_score = #{actualScore},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where project_id = #{projectId}
+    </update>
+
+    <delete id="deleteMsResearchProjectByProjectId" parameterType="Long">
+        delete from ms_research_project where project_id = #{projectId}
+    </delete>
+
+    <delete id="deleteMsResearchProjectByProjectIds" parameterType="String">
+        delete from ms_research_project where project_id in
+        <foreach item="projectId" collection="array" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMsResearchProjectByProfessorId" parameterType="Long">
+        delete from ms_research_project where professor_id = #{professorId}
+    </delete>
+
+    <select id="countProjectStats" parameterType="String" resultType="java.util.Map">
+        select count(project_id) as project_count,
+               coalesce(sum(actual_score), 0) as total_score,
+               coalesce(sum(case when status = '0' then 1 else 0 end), 0) as active_count,
+               coalesce(sum(case when status = '1' then 1 else 0 end), 0) as completed_count
+        from ms_research_project
+        where status != '2'
+        <if test="_parameter != null and _parameter != ''">and year(start_date) = #{_parameter}</if>
+    </select>
+
+</mapper>

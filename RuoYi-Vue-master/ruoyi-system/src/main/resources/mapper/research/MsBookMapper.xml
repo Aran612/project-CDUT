@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsBookMapper">
+    <resultMap type="MsBook" id="MsBookResult">
+        <result property="bookId" column="book_id"/>
+        <result property="bookName" column="book_name"/>
+        <result property="gradeId" column="grade_id"/>
+        <result property="gradeName" column="grade_name"/>
+        <result property="professorId" column="professor_id"/>
+        <result property="professorName" column="professor_name"/>
+        <result property="authorRole" column="author_role"/>
+        <result property="publisher" column="publisher"/>
+        <result property="publishDate" column="publish_date"/>
+        <result property="wordCount" column="word_count"/>
+        <result property="isbn" column="isbn"/>
+        <result property="actualScore" column="actual_score"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <sql id="vo">
+        select b.book_id, b.book_name, b.grade_id, g.grade_name, b.professor_id, r.name professor_name,
+               b.author_role, b.publisher, b.publish_date, b.word_count, b.isbn,
+               b.actual_score, b.status, b.create_by, b.create_time, b.update_by, b.update_time, b.remark
+        from ms_book b left join ms_book_grade g on b.grade_id=g.grade_id left join ms_professor r on b.professor_id=r.professor_id
+    </sql>
+    <select id="selectMsBookList" parameterType="MsBook" resultMap="MsBookResult">
+        <include refid="vo"/><where>
+        <if test="bookName!=null and bookName!=''">and b.book_name like concat('%',#{bookName},'%')</if>
+        <if test="gradeId!=null">and b.grade_id=#{gradeId}</if>
+        <if test="professorId!=null">and b.professor_id=#{professorId}</if>
+        <if test="status!=null and status!=''">and b.status=#{status}</if></where> order by b.publish_date desc
+    </select>
+    <select id="selectMsBookByBookId" parameterType="Long" resultMap="MsBookResult"><include refid="vo"/> where b.book_id=#{bookId}</select>
+    <insert id="insertMsBook" parameterType="MsBook" useGeneratedKeys="true" keyProperty="bookId">
+        insert into ms_book<trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="bookName!=null">book_name,</if><if test="gradeId!=null">grade_id,</if><if test="professorId!=null">professor_id,</if>
+        <if test="authorRole!=null">author_role,</if><if test="publisher!=null">publisher,</if><if test="publishDate!=null">publish_date,</if>
+        <if test="wordCount!=null">word_count,</if><if test="isbn!=null">isbn,</if><if test="actualScore!=null">actual_score,</if>
+        <if test="status!=null">status,</if><if test="createBy!=null">create_by,</if><if test="createTime!=null">create_time,</if><if test="remark!=null">remark,</if></trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="bookName!=null">#{bookName},</if><if test="gradeId!=null">#{gradeId},</if><if test="professorId!=null">#{professorId},</if>
+        <if test="authorRole!=null">#{authorRole},</if><if test="publisher!=null">#{publisher},</if><if test="publishDate!=null">#{publishDate},</if>
+        <if test="wordCount!=null">#{wordCount},</if><if test="isbn!=null">#{isbn},</if><if test="actualScore!=null">#{actualScore},</if>
+        <if test="status!=null">#{status},</if><if test="createBy!=null">#{createBy},</if><if test="createTime!=null">#{createTime},</if><if test="remark!=null">#{remark},</if></trim>
+    </insert>
+    <update id="updateMsBook" parameterType="MsBook">
+        update ms_book<trim prefix="SET" suffixOverrides=",">
+        <if test="bookName!=null">book_name=#{bookName},</if><if test="gradeId!=null">grade_id=#{gradeId},</if><if test="professorId!=null">professor_id=#{professorId},</if>
+        <if test="authorRole!=null">author_role=#{authorRole},</if><if test="publisher!=null">publisher=#{publisher},</if><if test="publishDate!=null">publish_date=#{publishDate},</if>
+        <if test="wordCount!=null">word_count=#{wordCount},</if><if test="isbn!=null">isbn=#{isbn},</if><if test="actualScore!=null">actual_score=#{actualScore},</if>
+        <if test="status!=null">status=#{status},</if><if test="updateBy!=null">update_by=#{updateBy},</if><if test="updateTime!=null">update_time=#{updateTime},</if><if test="remark!=null">remark=#{remark},</if></trim>
+        where book_id=#{bookId}
+    </update>
+    <delete id="deleteMsBookByBookId" parameterType="Long">delete from ms_book where book_id=#{bookId}</delete>
+    <delete id="deleteMsBookByBookIds" parameterType="String">delete from ms_book where book_id in<foreach item="id" collection="array" open="(" separator="," close=")">#{id}</foreach></delete>
+    <delete id="deleteMsBookByProfessorId" parameterType="Long">delete from ms_book where professor_id = #{professorId}</delete>
+</mapper>
