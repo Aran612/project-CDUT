@@ -1,35 +1,32 @@
 # Session Summary — 2026-06-19
 
-## 环境迁移 ✅
+## 本次完成工作
 
-项目从旧电脑迁移到新 Windows 11 机器，已完成全环境重建：
+### 🏫 管理科学学院框架定制
 
-### 安装的软件
+将若依系统管理演示数据全部替换为成都理工大学管理科学学院的组织架构：
 
-| 组件 | 版本 | 安装方式 | 位置 |
-|------|------|----------|------|
-| JDK | 17.0.19 Temurin | winget | `C:\Program Files\Eclipse Adoptium\` |
-| Maven | 3.9.16 | 手动下载 | `C:\apache-maven-3.9.16\` |
-| MySQL | 8.4.9 | winget | `C:\Program Files\MySQL\MySQL Server 8.4\` |
-| Redis | 3.0.504 | winget | `C:\Program Files\Redis\` |
-| Node.js | v24.11.1 | 已有 | — |
+- **部门**：成都理工大学 → 管理科学学院 → 11个系/办公室
+- **岗位**：12个学术行政岗位（院长/教授/辅导员/教务员等）
+- **角色**：5个学院角色（系统管理员/学院领导/系主任/普通教师/行政人员）
+- **用户**：8位教职员工，各分配角色/岗位/部门
+- **通知公告**：2条学院公告替换若依原生公告
+- **菜单**：menu_id=4 "若依官网" → "学校官网"（cdut.edu.cn）
 
-### 数据库
+新增文件：`RuoYi-Vue-master/sql/migrate_cdut.sql`（可重复执行）
 
-- `ry` 数据库已创建，导入 `ry_20250522.sql` + `quartz.sql` + `research_init.sql`
-- root 密码: `admin123`
+### 🌐 环境迁移（已完成）
 
-### 配置修改
+| 组件 | 版本 | 位置 |
+|------|------|------|
+| JDK | 17.0.19 Temurin | `C:\Program Files\Eclipse Adoptium\` |
+| Maven | 3.9.16 | `C:\apache-maven-3.9.16\` |
+| MySQL | 8.4.9 | winget 安装，密码 admin123 |
+| Redis | 3.0.504 | winget 安装，端口 6379 |
 
-| 文件 | 修改项 |
-|------|--------|
-| `application.yml` | 上传路径: `D:/ruoyi/uploadPath` → `${user.home}/ruoyi/uploadPath` |
-| `application.yml` | 数据库密码: `123456` → `admin123` |
-| `application-druid.yml` | 数据库密码: `123456` → `admin123` |
-
-### Git
-
-- 重新初始化仓库，已做初始提交
+配置文件修改：
+- `application.yml`：上传路径 → `${user.home}/ruoyi/uploadPath`；DB密码 → `admin123`
+- `application-druid.yml`：DB密码 → `admin123`
 
 ---
 
@@ -37,10 +34,12 @@
 
 | 服务 | 地址 | 状态 |
 |------|------|------|
-| MySQL | localhost:3306 | ✅ 服务自启 |
-| Redis | localhost:6379 | ✅ 服务自启 |
-| 后端 | http://localhost:8080 | ✅ mvn spring-boot:run -pl ruoyi-admin |
-| 前端 | http://localhost:80 | ✅ npm run dev |
+| MySQL | localhost:3306 | ✅ 自启 |
+| Redis | localhost:6379 | ✅ 自启 |
+| 后端 | http://localhost:8080 | ✅ 运行中 |
+| 前端 | http://localhost:80 | ✅ 运行中 |
+
+登录：`admin / admin123`
 
 ---
 
@@ -55,9 +54,6 @@ mvn spring-boot:run -pl ruoyi-admin
 # 前端
 cd RuoYi-Vue3-master
 npm run dev
-
-# 浏览器 http://localhost
-# 登录 admin / admin123
 ```
 
 ---
