@@ -15,6 +15,14 @@
           <el-option label="助教" value="助教" />
         </el-select>
       </el-form-item>
+      <el-form-item label="师资类型" prop="teacherType">
+        <el-select v-model="queryParams.teacherType" placeholder="请选择类型" clearable>
+          <el-option label="研究型学者" value="1" />
+          <el-option label="教学型教师" value="2" />
+          <el-option label="双师型教师" value="3" />
+          <el-option label="行政兼职" value="4" />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -49,6 +57,11 @@
       <el-table-column label="姓名" align="center" prop="name" width="100" />
       <el-table-column label="所属部门" align="center" prop="department" show-overflow-tooltip />
       <el-table-column label="职称" align="center" prop="title" width="100" />
+      <el-table-column label="师资类型" align="center" prop="teacherType" width="110">
+        <template #default="scope">
+          <el-tag :type="getTeacherTypeTag(scope.row.teacherType)">{{ getTeacherTypeName(scope.row.teacherType) }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="研究方向" align="center" prop="researchField" show-overflow-tooltip />
       <el-table-column label="邮箱" align="center" prop="email" show-overflow-tooltip />
       <el-table-column label="累计积分" align="center" prop="totalScore" width="100" sortable />
@@ -83,6 +96,16 @@
                 <el-option label="副教授" value="副教授" />
                 <el-option label="讲师" value="讲师" />
                 <el-option label="助教" value="助教" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="师资类型" prop="teacherType">
+              <el-select v-model="form.teacherType" placeholder="请选择师资类型">
+                <el-option label="研究型学者" value="1" />
+                <el-option label="教学型教师" value="2" />
+                <el-option label="双师型教师" value="3" />
+                <el-option label="行政兼职" value="4" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -157,6 +180,7 @@ const data = reactive({
     name: null,
     department: null,
     title: null,
+    teacherType: null,
     researchField: null,
     email: null,
     status: null
@@ -168,6 +192,16 @@ const data = reactive({
 })
 
 const { queryParams, form, rules } = toRefs(data)
+
+function getTeacherTypeTag(type) {
+  const map = { '1': '', '2': 'success', '3': 'warning', '4': 'info' }
+  return map[type] || 'info'
+}
+
+function getTeacherTypeName(type) {
+  const map = { '1': '研究型学者', '2': '教学型教师', '3': '双师型教师', '4': '行政兼职' }
+  return map[type] || '未分类'
+}
 
 function getList() {
   loading.value = true
@@ -190,6 +224,7 @@ function reset() {
     name: null,
     department: null,
     title: null,
+    teacherType: '3',
     researchField: null,
     email: null,
     totalScore: 0,

@@ -10,6 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="name"           column="name"            />
         <result property="department"     column="department"      />
         <result property="title"          column="title"           />
+        <result property="teacherType"    column="teacher_type"    />
         <result property="researchField"  column="research_field"  />
         <result property="email"          column="email"           />
         <result property="totalScore"     column="total_score"     />
@@ -22,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMsProfessorVo">
-        select professor_id, user_id, name, department, title, research_field, email, total_score, status, create_by, create_time, update_by, update_time, remark
+        select professor_id, user_id, name, department, title, teacher_type, research_field, email, total_score, status, create_by, create_time, update_by, update_time, remark
         from ms_professor
     </sql>
 
@@ -32,6 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="department != null  and department != ''"> and department like concat('%', #{department}, '%')</if>
             <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="teacherType != null  and teacherType != ''"> and teacher_type = #{teacherType}</if>
             <if test="researchField != null  and researchField != ''"> and research_field like concat('%', #{researchField}, '%')</if>
             <if test="email != null  and email != ''"> and email = #{email}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
@@ -51,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null and name != ''">name,</if>
             <if test="department != null">department,</if>
             <if test="title != null">title,</if>
+            <if test="teacherType != null">teacher_type,</if>
             <if test="researchField != null">research_field,</if>
             <if test="email != null">email,</if>
             <if test="totalScore != null">total_score,</if>
@@ -66,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null and name != ''">#{name},</if>
             <if test="department != null">#{department},</if>
             <if test="title != null">#{title},</if>
+            <if test="teacherType != null">#{teacherType},</if>
             <if test="researchField != null">#{researchField},</if>
             <if test="email != null">#{email},</if>
             <if test="totalScore != null">#{totalScore},</if>
@@ -85,6 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="department != null">department = #{department},</if>
             <if test="title != null">title = #{title},</if>
+            <if test="teacherType != null">teacher_type = #{teacherType},</if>
             <if test="researchField != null">research_field = #{researchField},</if>
             <if test="email != null">email = #{email},</if>
             <if test="totalScore != null">total_score = #{totalScore},</if>

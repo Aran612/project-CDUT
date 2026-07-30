@@ -34,6 +34,10 @@ public class MsProfessor extends BaseEntity
     @Excel(name = "职称", readConverterExp = "教授=教授,副教授=副教授,讲师=讲师,助教=助教")
     private String title;
 
+    /** 师资类型（1=研究型学者 2=教学型教师 3=双师型教师 4=行政兼职） */
+    @Excel(name = "师资类型", readConverterExp = "1=研究型学者,2=教学型教师,3=双师型教师,4=行政兼职")
+    private String teacherType;
+
     /** 研究方向 */
     @Excel(name = "研究方向")
     private String researchField;
@@ -100,6 +104,16 @@ public class MsProfessor extends BaseEntity
         return title;
     }
 
+    public void setTeacherType(String teacherType)
+    {
+        this.teacherType = teacherType;
+    }
+
+    public String getTeacherType()
+    {
+        return teacherType;
+    }
+
     public void setResearchField(String researchField)
     {
         this.researchField = researchField;
@@ -148,6 +162,7 @@ public class MsProfessor extends BaseEntity
             .append("name", getName())
             .append("department", getDepartment())
             .append("title", getTitle())
+            .append("teacherType", getTeacherType())
             .append("researchField", getResearchField())
             .append("email", getEmail())
             .append("totalScore", getTotalScore())

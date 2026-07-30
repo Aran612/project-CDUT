@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsCourseMapper">
+
+    <resultMap type="MsCourse" id="MsCourseResult">
+        <result property="courseId"        column="course_id"         />
+        <result property="courseName"      column="course_name"       />
+        <result property="courseCode"      column="course_code"       />
+        <result property="creditValue"     column="credit_value"      />
+        <result property="courseType"      column="course_type"       />
+        <result property="departmentId"    column="department_id"     />
+        <result property="departmentName"  column="department_name"   />
+        <result property="totalHours"      column="total_hours"       />
+        <result property="status"         column="status"            />
+        <result property="createBy"       column="create_by"         />
+        <result property="createTime"     column="create_time"       />
+        <result property="updateBy"       column="update_by"         />
+        <result property="updateTime"     column="update_time"       />
+        <result property="remark"         column="remark"            />
+    </resultMap>
+
+    <sql id="selectMsCourseVo">
+        select c.course_id, c.course_name, c.course_code, c.credit_value,
+               c.course_type, c.department_id, c.department_name,
+               c.total_hours, c.status, c.create_by, c.create_time,
+               c.update_by, c.update_time, c.remark
+        from ms_course c
+    </sql>
+
+    <select id="selectMsCourseList" parameterType="MsCourse" resultMap="MsCourseResult">
+        <include refid="selectMsCourseVo"/>
+        <where>
+            <if test="courseName != null and courseName != ''"> and c.course_name like concat('%', #{courseName}, '%')</if>
+            <if test="courseCode != null and courseCode != ''"> and c.course_code like concat('%', #{courseCode}, '%')</if>
+            <if test="courseType != null and courseType != ''"> and c.course_type = #{courseType}</if>
+            <if test="departmentId != null"> and c.department_id = #{departmentId}</if>
+            <if test="departmentName != null and departmentName != ''"> and c.department_name like concat('%', #{departmentName}, '%')</if>
+            <if test="status != null and status != ''"> and c.status = #{status}</if>
+        </where>
+        order by c.course_id desc
+    </select>
+
+    <select id="selectAllMsCourse" resultMap="MsCourseResult">
+        <include refid="selectMsCourseVo"/>
+        where c.status = '0'
+        order by c.course_id asc
+    </select>
+
+    <select id="selectMsCourseByCourseId" parameterType="Long" resultMap="MsCourseResult">
+        <include refid="selectMsCourseVo"/>
+        where c.course_id = #{courseId}
+    </select>
+
+    <insert id="insertMsCourse" parameterType="MsCourse" useGeneratedKeys="true" keyProperty="courseId">
+        insert into ms_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">course_name,</if>
+            <if test="courseCode != null">course_code,</if>
+            <if test="creditValue != null">credit_value,</if>
+            <if test="courseType != null">course_type,</if>
+            <if test="departmentId != null">department_id,</if>
+            <if test="departmentName != null">department_name,</if>
+            <if test="totalHours != null">total_hours,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">#{courseName},</if>
+            <if test="courseCode != null">#{courseCode},</if>
+            <if test="creditValue != null">#{creditValue},</if>
+            <if test="courseType != null">#{courseType},</if>
+            <if test="departmentId != null">#{departmentId},</if>
+            <if test="departmentName != null">#{departmentName},</if>
+            <if test="totalHours != null">#{totalHours},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMsCourse" parameterType="MsCourse">
+        update ms_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">course_name = #{courseName},</if>
+            <if test="courseCode != null">course_code = #{courseCode},</if>
+            <if test="creditValue != null">credit_value = #{creditValue},</if>
+            <if test="courseType != null">course_type = #{courseType},</if>
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+            <if test="departmentName != null">department_name = #{departmentName},</if>
+            <if test="totalHours != null">total_hours = #{totalHours},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where course_id = #{courseId}
+    </update>
+
+    <delete id="deleteMsCourseByCourseId" parameterType="Long">
+        delete from ms_course where course_id = #{courseId}
+    </delete>
+
+    <delete id="deleteMsCourseByCourseIds" parameterType="String">
+        delete from ms_course where course_id in
+        <foreach item="courseId" collection="array" open="(" separator="," close=")">
+            #{courseId}
+        </foreach>
+    </delete>
+
+    <select id="countCourseByType" resultType="java.util.Map">
+        select course_type,
+               count(course_id) as course_count,
+               coalesce(sum(credit_value), 0) as total_credits
+        from ms_course
+        where status = '0'
+        group by course_type
+        order by course_type
+    </select>
+
+</mapper>

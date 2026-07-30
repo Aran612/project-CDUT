@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsStudentCreditMapper">
+
+    <resultMap type="MsStudentCredit" id="MsStudentCreditResult">
+        <result property="creditId"        column="credit_id"         />
+        <result property="studentName"    column="student_name"      />
+        <result property="studentId"      column="student_id"        />
+        <result property="departmentName" column="department_name"   />
+        <result property="totalCredits"   column="total_credits"     />
+        <result property="semester"       column="semester"          />
+        <result property="status"         column="status"            />
+        <result property="createBy"       column="create_by"         />
+        <result property="createTime"     column="create_time"       />
+        <result property="updateBy"       column="update_by"         />
+        <result property="updateTime"     column="update_time"       />
+        <result property="remark"         column="remark"            />
+    </resultMap>
+
+    <sql id="selectMsStudentCreditVo">
+        select sc.credit_id, sc.student_name, sc.student_id, sc.department_name,
+               sc.total_credits, sc.semester, sc.status, sc.create_by, sc.create_time,
+               sc.update_by, sc.update_time, sc.remark
+        from ms_student_credit sc
+    </sql>
+
+    <select id="selectMsStudentCreditList" parameterType="MsStudentCredit" resultMap="MsStudentCreditResult">
+        <include refid="selectMsStudentCreditVo"/>
+        <where>
+            <if test="studentName != null and studentName != ''"> and sc.student_name like concat('%', #{studentName}, '%')</if>
+            <if test="studentId != null and studentId != ''"> and sc.student_id = #{studentId}</if>
+            <if test="departmentName != null and departmentName != ''"> and sc.department_name like concat('%', #{departmentName}, '%')</if>
+            <if test="semester != null and semester != ''"> and sc.semester = #{semester}</if>
+            <if test="status != null and status != ''"> and sc.status = #{status}</if>
+        </where>
+        order by sc.credit_id desc
+    </select>
+
+    <select id="selectMsStudentCreditByCreditId" parameterType="Long" resultMap="MsStudentCreditResult">
+        <include refid="selectMsStudentCreditVo"/>
+        where sc.credit_id = #{creditId}
+    </select>
+
+    <insert id="insertMsStudentCredit" parameterType="MsStudentCredit" useGeneratedKeys="true" keyProperty="creditId">
+        insert into ms_student_credit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentName != null and studentName != ''">student_name,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="departmentName != null">department_name,</if>
+            <if test="totalCredits != null">total_credits,</if>
+            <if test="semester != null">semester,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentName != null and studentName != ''">#{studentName},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="departmentName != null">#{departmentName},</if>
+            <if test="totalCredits != null">#{totalCredits},</if>
+            <if test="semester != null">#{semester},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMsStudentCredit" parameterType="MsStudentCredit">
+        update ms_student_credit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="departmentName != null">department_name = #{departmentName},</if>
+            <if test="totalCredits != null">total_credits = #{totalCredits},</if>
+            <if test="semester != null">semester = #{semester},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where credit_id = #{creditId}
+    </update>
+
+    <delete id="deleteMsStudentCreditByCreditId" parameterType="Long">
+        delete from ms_student_credit where credit_id = #{creditId}
+    </delete>
+
+    <delete id="deleteMsStudentCreditByCreditIds" parameterType="String">
+        delete from ms_student_credit where credit_id in
+        <foreach item="creditId" collection="array" open="(" separator="," close=")">
+            #{creditId}
+        </foreach>
+    </delete>
+
+    <update id="updateTotalCreditsByStudent" parameterType="MsStudentCredit">
+        update ms_student_credit
+        set total_credits = #{totalCredits},
+            update_by = #{updateBy},
+            update_time = #{updateTime}
+        where student_id = #{studentId}
+        <if test="semester != null and semester != ''">and semester = #{semester}</if>
+    </update>
+
+</mapper>

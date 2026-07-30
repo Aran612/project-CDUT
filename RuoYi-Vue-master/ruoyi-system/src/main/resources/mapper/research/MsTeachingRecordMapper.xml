@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsTeachingRecordMapper">
+
+    <resultMap type="MsTeachingRecord" id="MsTeachingRecordResult">
+        <result property="recordId"          column="record_id"            />
+        <result property="courseId"          column="course_id"            />
+        <result property="courseName"        column="course_name"          />
+        <result property="professorId"       column="professor_id"         />
+        <result property="professorName"     column="professor_name"       />
+        <result property="semester"          column="semester"             />
+        <result property="studentCount"      column="student_count"        />
+        <result property="creditPerCourse"   column="credit_per_course"    />
+        <result property="calculatedScore"   column="calculated_score"    />
+        <result property="isResearch"        column="is_research"          />
+        <result property="status"           column="status"               />
+        <result property="createBy"          column="create_by"            />
+        <result property="createTime"        column="create_time"          />
+        <result property="updateBy"          column="update_by"            />
+        <result property="updateTime"        column="update_time"          />
+        <result property="remark"            column="remark"               />
+    </resultMap>
+
+    <sql id="selectMsTeachingRecordVo">
+        select r.record_id, r.course_id, c.course_name, r.professor_id, p.name as professor_name,
+               r.semester, r.student_count, r.credit_per_course, r.calculated_score,
+               r.is_research, r.status, r.create_by, r.create_time, r.update_by, r.update_time, r.remark
+        from ms_teaching_record r
+        left join ms_course c on r.course_id = c.course_id
+        left join ms_professor p on r.professor_id = p.professor_id
+    </sql>
+
+    <select id="selectMsTeachingRecordList" parameterType="MsTeachingRecord" resultMap="MsTeachingRecordResult">
+        <include refid="selectMsTeachingRecordVo"/>
+        <where>
+            <if test="courseId != null"> and r.course_id = #{courseId}</if>
+            <if test="courseName != null and courseName != ''"> and c.course_name like concat('%', #{courseName}, '%')</if>
+            <if test="professorId != null"> and r.professor_id = #{professorId}</if>
+            <if test="professorName != null and professorName != ''"> and p.name like concat('%', #{professorName}, '%')</if>
+            <if test="semester != null and semester != ''"> and r.semester = #{semester}</if>
+            <if test="isResearch != null and isResearch != ''"> and r.is_research = #{isResearch}</if>
+            <if test="status != null and status != ''"> and r.status = #{status}</if>
+        </where>
+        order by r.record_id desc
+    </select>
+
+    <select id="selectMsTeachingRecordByRecordId" parameterType="Long" resultMap="MsTeachingRecordResult">
+        <include refid="selectMsTeachingRecordVo"/>
+        where r.record_id = #{recordId}
+    </select>
+
+    <insert id="insertMsTeachingRecord" parameterType="MsTeachingRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into ms_teaching_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">course_id,</if>
+            <if test="courseName != null">course_name,</if>
+            <if test="professorId != null">professor_id,</if>
+            <if test="professorName != null">professor_name,</if>
+            <if test="semester != null">semester,</if>
+            <if test="studentCount != null">student_count,</if>
+            <if test="creditPerCourse != null">credit_per_course,</if>
+            <if test="calculatedScore != null">calculated_score,</if>
+            <if test="isResearch != null">is_research,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">#{courseId},</if>
+            <if test="courseName != null">#{courseName},</if>
+            <if test="professorId != null">#{professorId},</if>
+            <if test="professorName != null">#{professorName},</if>
+            <if test="semester != null">#{semester},</if>
+            <if test="studentCount != null">#{studentCount},</if>
+            <if test="creditPerCourse != null">#{creditPerCourse},</if>
+            <if test="calculatedScore != null">#{calculatedScore},</if>
+            <if test="isResearch != null">#{isResearch},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMsTeachingRecord" parameterType="MsTeachingRecord">
+        update ms_teaching_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="courseName != null">course_name = #{courseName},</if>
+            <if test="professorId != null">professor_id = #{professorId},</if>
+            <if test="professorName != null">professor_name = #{professorName},</if>
+            <if test="semester != null">semester = #{semester},</if>
+            <if test="studentCount != null">student_count = #{studentCount},</if>
+            <if test="creditPerCourse != null">credit_per_course = #{creditPerCourse},</if>
+            <if test="calculatedScore != null">calculated_score = #{calculatedScore},</if>
+            <if test="isResearch != null">is_research = #{isResearch},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteMsTeachingRecordByRecordId" parameterType="Long">
+        delete from ms_teaching_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteMsTeachingRecordByRecordIds" parameterType="String">
+        delete from ms_teaching_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+    <select id="selectProfessorTeachingStats" parameterType="String" resultType="java.util.Map">
+        select r.professor_id, p.name as professor_name, p.department, p.title,
+               count(r.record_id) as record_count,
+               coalesce(sum(r.student_count), 0) as total_students,
+               coalesce(sum(r.calculated_score), 0) as total_score
+        from ms_teaching_record r
+        left join ms_professor p on r.professor_id = p.professor_id
+        <where>
+            r.status = '0'
+            <if test="_parameter != null and _parameter != ''">and r.semester = #{_parameter}</if>
+        </where>
+        group by r.professor_id, p.name, p.department, p.title
+        order by total_score desc
+    </select>
+
+    <select id="countTeachingScoreBySemester" resultType="java.util.Map">
+        select semester,
+               count(record_id) as record_count,
+               coalesce(sum(student_count), 0) as total_students,
+               coalesce(sum(calculated_score), 0) as total_score
+        from ms_teaching_record
+        where status = '0'
+        group by semester
+        order by semester desc
+    </select>
+
+    <select id="selectProfessorResearchStats" parameterType="String" resultType="java.util.Map">
+        select r.professor_id, p.name as professor_name,
+               count(case when r.is_research = '1' then 1 end) as research_count,
+               coalesce(sum(case when r.is_research = '1' then r.calculated_score else 0 end), 0) as research_score,
+               coalesce(sum(r.calculated_score), 0) as total_score
+        from ms_teaching_record r
+        left join ms_professor p on r.professor_id = p.professor_id
+        <where>
+            r.status = '0'
+            <if test="_parameter != null and _parameter != ''">and r.semester = #{_parameter}</if>
+        </where>
+        group by r.professor_id, p.name
+        order by research_score desc
+    </select>
+
+    <select id="selectTotalStudentCredits" parameterType="String" resultType="java.util.Map">
+        select coalesce(sum(calculated_score), 0) as total_credits,
+               count(record_id) as total_records
+        from ms_teaching_record
+        where status = '0'
+        <if test="_parameter != null and _parameter != ''">and semester = #{_parameter}</if>
+    </select>
+
+</mapper>

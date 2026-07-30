@@ -1,32 +1,18 @@
-# Session Summary — 2026-06-19
+# Session Summary — 2026-06-29
 
 ## 本次完成工作
 
-### 🏫 管理科学学院框架定制
+### 🔧 GitHub 同步准备
 
-将若依系统管理演示数据全部替换为成都理工大学管理科学学院的组织架构：
+清理仓库，为推送到 GitHub 做准备：
 
-- **部门**：成都理工大学 → 管理科学学院 → 11个系/办公室
-- **岗位**：12个学术行政岗位（院长/教授/辅导员/教务员等）
-- **角色**：5个学院角色（系统管理员/学院领导/系主任/普通教师/行政人员）
-- **用户**：8位教职员工，各分配角色/岗位/部门
-- **通知公告**：2条学院公告替换若依原生公告
-- **菜单**：menu_id=4 "若依官网" → "学校官网"（cdut.edu.cn）
+- **移除敏感文件跟踪**：`.claude/settings.local.json` 从 Git 跟踪中移除，加入 `.gitignore`
+- **删除旧前端**：`RuoYi-Vue-master/ruoyi-ui` (Vue 2) 从 Git 移除并物理删除，当前项目使用 `RuoYi-Vue3-master` (Vue 3)
+- **修复 `.gitignore`**：统一换行符，新增 Claude Code 本地配置忽略规则
 
-新增文件：`RuoYi-Vue-master/sql/migrate_cdut.sql`（可重复执行）
+### 🚀 项目启动验证
 
-### 🌐 环境迁移（已完成）
-
-| 组件 | 版本 | 位置 |
-|------|------|------|
-| JDK | 17.0.19 Temurin | `C:\Program Files\Eclipse Adoptium\` |
-| Maven | 3.9.16 | `C:\apache-maven-3.9.16\` |
-| MySQL | 8.4.9 | winget 安装，密码 admin123 |
-| Redis | 3.0.504 | winget 安装，端口 6379 |
-
-配置文件修改：
-- `application.yml`：上传路径 → `${user.home}/ruoyi/uploadPath`；DB密码 → `admin123`
-- `application-druid.yml`：DB密码 → `admin123`
+前后端均成功启动运行。
 
 ---
 
@@ -40,6 +26,21 @@
 | 前端 | http://localhost:80 | ✅ 运行中 |
 
 登录：`admin / admin123`
+
+---
+
+## Git 历史
+
+```
+92653db chore: 修复 .gitignore 换行符, 物理删除 ruoyi-ui 目录
+ed0c408 chore: 清理 — 移除 settings.local.json 跟踪, 移除旧 ruoyi-ui, 更新 .gitignore
+144cd79 Update session-summary: college framework migration done
+43fa4c7 Add CDUT Management Science College migration script
+b18008c Update session-summary: post-migration state
+9ea987f Initial commit: RuoYi-Vue + 科研管理系统
+```
+
+工作树干净，无未提交文件。**尚未配置 GitHub remote**。
 
 ---
 
@@ -58,17 +59,46 @@ npm run dev
 
 ---
 
+## 项目结构
+
+```
+CDUT-ALPHA/
+├── RuoYi-Vue-master/        # 后端 (Spring Boot 4.0 + Java 17)
+│   ├── ruoyi-admin/         # 启动模块 (端口 8080)
+│   ├── ruoyi-common/        # 公共模块
+│   ├── ruoyi-framework/     # 框架模块
+│   ├── ruoyi-system/        # 系统模块
+│   ├── ruoyi-quartz/        # 定时任务
+│   ├── ruoyi-generator/     # 代码生成
+│   └── sql/                 # 数据库脚本 (含 migrate_cdut.sql)
+├── RuoYi-Vue3-master/       # 前端 (Vue 3 + Vite + Element Plus, 端口 80)
+├── .gitignore
+├── .claude/
+├── CLAUDE.md
+└── session-summary.md
+```
+
+---
+
 ## 剩余待办
 
 ### 高优先级
-1. **端到端测试** — 完整走一遍导入流程
-2. **一键导入上传按钮提前可见** — 选择教授前渲染但置灰
+1. **推送到 GitHub** — 创建私有仓库 `CDUT-ALPHA`，添加 remote，push
+2. **端到端测试** — 完整走一遍导入流程
+3. **一键导入上传按钮提前可见** — 选择教授前渲染但置灰
 
 ### 中优先级
-3. 区分考核计分和奖励计分的前端展示
-4. 按钮级权限验证
-5. 模板等级名称列添加下拉验证
+4. 区分考核计分和奖励计分的前端展示
+5. 按钮级权限验证
+6. 模板等级名称列添加下拉验证
 
 ### 低优先级
-6. 单元测试
-7. 一键导入支持 `updateSupport` 参数
+7. 单元测试
+8. 一键导入支持 `updateSupport` 参数
+
+---
+
+## 已知问题
+
+- 配置文件含明文密码（`application.yml`, `application-druid.yml`），用户确认暂不处理
+- 旧前端 `ruoyi-ui` 已删除，项目仅维护 Vue 3 版本

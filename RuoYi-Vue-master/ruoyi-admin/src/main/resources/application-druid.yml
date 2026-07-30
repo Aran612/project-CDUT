@@ -8,8 +8,8 @@ spring:
             # 主库数据源
             master:
                 url: jdbc:mysql://localhost:3306/ry?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
-                username: root
-                password: admin123
+                username: Aran
+                password: hutao5201314
             # 从库数据源
             slave:
                 enabled: false

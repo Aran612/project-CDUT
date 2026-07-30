@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MsCreditManagementMapper">
+
+    <!-- 公共SQL片段：查询教授信息（含师资类型） -->
+    <sql id="selectProfessorWithType">
+        SELECT p.professor_id, p.name, p.department, p.title, p.teacher_type, p.status
+        FROM ms_professor p
+    </sql>
+
+    <!-- 公共SQL片段：查询授课记录（含课程和教授信息） -->
+    <sql id="selectTeachingRecordWithCourseAndProfessor">
+        SELECT r.record_id, r.course_id, c.course_name, c.credit_value as credit_per_course,
+               r.professor_id, p.name as professor_name, p.department, p.title, p.teacher_type,
+               r.semester, r.student_count, r.calculated_score, r.is_research
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0' AND p.status = '0'
+    </sql>
+
+    <!-- 按师资类型统计学分 -->
+    <select id="selectCreditByTeacherType" parameterType="MsCreditStats" resultType="java.util.Map">
+        SELECT
+            p.teacher_type,
+            COUNT(DISTINCT r.professor_id) as professor_count,
+            COUNT(r.record_id) as record_count,
+            COALESCE(SUM(r.student_count), 0) as total_students,
+            COALESCE(SUM(r.calculated_score), 0) as total_credits,
+            COALESCE(SUM(CASE WHEN r.is_research = '1' THEN r.calculated_score ELSE 0 END), 0) as research_credits
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0' AND p.status = '0'
+        <if test="semester != null and semester != ''">AND r.semester = #{semester}</if>
+        <if test="department != null and department != ''">AND p.department = #{department}</if>
+        GROUP BY p.teacher_type
+        ORDER BY total_credits DESC
+    </select>
+
+    <!-- 按专业汇总学分 -->
+    <select id="selectCreditByDepartment" parameterType="MsCreditStats" resultType="java.util.Map">
+        SELECT
+            p.department,
+            COUNT(DISTINCT r.professor_id) as professor_count,
+            COUNT(r.record_id) as record_count,
+            COALESCE(SUM(r.student_count), 0) as total_students,
+            COALESCE(SUM(r.calculated_score), 0) as total_credits,
+            COALESCE(SUM(CASE WHEN p.teacher_type = '1' THEN r.calculated_score ELSE 0 END), 0) as research_professor_credits,
+            COALESCE(SUM(CASE WHEN p.teacher_type = '2' THEN r.calculated_score ELSE 0 END), 0) as teaching_professor_credits,
+            COALESCE(SUM(CASE WHEN p.teacher_type = '3' THEN r.calculated_score ELSE 0 END), 0) as dual_professor_credits,
+            COALESCE(SUM(CASE WHEN p.teacher_type = '4' THEN r.calculated_score ELSE 0 END), 0) as admin_professor_credits
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0' AND p.status = '0'
+        <if test="semester != null and semester != ''">AND r.semester = #{semester}</if>
+        <if test="teacherType != null and teacherType != ''">AND p.teacher_type = #{teacherType}</if>
+        GROUP BY p.department
+        ORDER BY total_credits DESC
+    </select>
+
+    <!-- 研究型占比分析（按专业） -->
+    <select id="selectResearchRatioByDepartment" parameterType="MsCreditStats" resultType="java.util.Map">
+        SELECT
+            p.department,
+            COUNT(DISTINCT r.professor_id) as professor_count,
+            COUNT(DISTINCT CASE WHEN p.teacher_type = '1' THEN r.professor_id END) as research_professor_count,
+            COALESCE(SUM(r.calculated_score), 0) as total_credits,
+            COALESCE(SUM(CASE WHEN p.teacher_type = '1' THEN r.calculated_score ELSE 0 END), 0) as research_credits
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0' AND p.status = '0'
+        <if test="semester != null and semester != ''">AND r.semester = #{semester}</if>
+        GROUP BY p.department
+        ORDER BY research_credits DESC
+    </select>
+
+    <!-- 研究型占比分析（按师资类型） -->
+    <select id="selectResearchRatioByTeacherType" parameterType="MsCreditStats" resultType="java.util.Map">
+        SELECT
+            p.teacher_type,
+            COUNT(DISTINCT r.professor_id) as professor_count,
+            COUNT(r.record_id) as record_count,
+            COALESCE(SUM(r.calculated_score), 0) as total_credits,
+            COALESCE(SUM(CASE WHEN r.is_research = '1' THEN r.calculated_score ELSE 0 END), 0) as research_credits
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0' AND p.status = '0'
+        <if test="semester != null and semester != ''">AND r.semester = #{semester}</if>
+        GROUP BY p.teacher_type
+        ORDER BY total_credits DESC
+    </select>
+
+    <!-- 学生学分明细（精确到每个学生的学分计算） -->
+    <select id="selectStudentCreditDetail" parameterType="MsCreditStats" resultType="java.util.Map">
+        SELECT
+            r.record_id,
+            c.course_id,
+            c.course_name,
+            c.course_code,
+            r.credit_per_course,
+            r.student_count,
+            r.calculated_score as total_course_credits,
+            CASE WHEN r.student_count > 0 THEN r.calculated_score / r.student_count ELSE 0 END as per_student_credits,
+            r.professor_id,
+            p.name as professor_name,
+            p.department,
+            p.title,
+            p.teacher_type,
+            r.semester,
+            r.is_research
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0'
+        <if test="semester != null and semester != ''">AND r.semester = #{semester}</if>
+        <if test="department != null and department != ''">AND p.department = #{department}</if>
+        <if test="teacherType != null and teacherType != ''">AND p.teacher_type = #{teacherType}</if>
+        ORDER BY r.calculated_score DESC
+    </select>
+
+    <!-- 按教授统计教学学分 -->
+    <select id="selectCreditByProfessor" parameterType="MsCreditStats" resultType="java.util.Map">
+        SELECT
+            p.professor_id,
+            p.name as professor_name,
+            p.department,
+            p.title,
+            p.teacher_type,
+            COUNT(r.record_id) as record_count,
+            COUNT(DISTINCT r.course_id) as course_count,
+            COALESCE(SUM(r.student_count), 0) as total_students,
+            COALESCE(SUM(r.calculated_score), 0) as total_credits,
+            COALESCE(SUM(CASE WHEN r.is_research = '1' THEN r.calculated_score ELSE 0 END), 0) as research_credits
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0' AND p.status = '0'
+        <if test="semester != null and semester != ''">AND r.semester = #{semester}</if>
+        <if test="teacherType != null and teacherType != ''">AND p.teacher_type = #{teacherType}</if>
+        <if test="department != null and department != ''">AND p.department = #{department}</if>
+        GROUP BY p.professor_id, p.name, p.department, p.title, p.teacher_type
+        ORDER BY total_credits DESC
+    </select>
+
+    <!-- 学分总览统计 -->
+    <select id="selectCreditOverview" parameterType="MsCreditStats" resultType="java.util.Map">
+        SELECT
+            COUNT(DISTINCT r.professor_id) as total_professors,
+            COUNT(DISTINCT r.course_id) as total_courses,
+            COUNT(r.record_id) as total_records,
+            COALESCE(SUM(r.student_count), 0) as total_students,
+            COALESCE(SUM(r.calculated_score), 0) as total_credits,
+            COALESCE(SUM(CASE WHEN p.teacher_type = '1' THEN r.calculated_score ELSE 0 END), 0) as research_credits,
+            COUNT(DISTINCT CASE WHEN p.teacher_type = '1' THEN r.professor_id END) as research_professor_count,
+            COUNT(DISTINCT p.department) as total_departments
+        FROM ms_teaching_record r
+        LEFT JOIN ms_course c ON r.course_id = c.course_id
+        LEFT JOIN ms_professor p ON r.professor_id = p.professor_id
+        WHERE r.status = '0' AND p.status = '0'
+        <if test="semester != null and semester != ''">AND r.semester = #{semester}</if>
+        <if test="department != null and department != ''">AND p.department = #{department}</if>
+    </select>
+
+    <!-- 获取学期列表 -->
+    <select id="selectSemesterList" resultType="java.lang.String">
+        SELECT DISTINCT semester
+        FROM ms_teaching_record
+        WHERE status = '0' AND semester IS NOT NULL AND semester != ''
+        ORDER BY semester DESC
+    </select>
+
+    <!-- 获取院系列表 -->
+    <select id="selectDepartmentList" resultType="java.lang.String">
+        SELECT DISTINCT department
+        FROM ms_professor
+        WHERE status = '0' AND department IS NOT NULL AND department != ''
+        ORDER BY department
+    </select>
+
+</mapper>
