@@ -4,7 +4,7 @@
       <el-col :span="6">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
-            <div class="stat-icon" style="background: #409EFF;"><el-icon :size="36"><DataAnalysis /></el-icon></el-icon>
+            <div class="stat-icon" style="background: #409EFF;"><el-icon :size="36"><DataAnalysis /></el-icon></div>
             <div class="stat-info">
               <div class="stat-value">{{ overview.totalStudents || 0 }}</div>
               <div class="stat-label">全体学生总学分</div>
@@ -15,7 +15,7 @@
       <el-col :span="6">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
-            <div class="stat-icon" style="background: #67C23A;"><el-icon :size="36"><User /></el-icon></el-icon>
+            <div class="stat-icon" style="background: #67C23A;"><el-icon :size="36"><User /></el-icon></div>
             <div class="stat-info">
               <div class="stat-value">{{ overview.totalProfessors || 0 }}</div>
               <div class="stat-label">授课教授数</div>
@@ -26,7 +26,7 @@
       <el-col :span="6">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
-            <div class="stat-icon" style="background: #E6A23C;"><el-icon :size="36"><Notebook /></el-icon></el-icon>
+            <div class="stat-icon" style="background: #E6A23C;"><el-icon :size="36"><Notebook /></el-icon></div>
             <div class="stat-info">
               <div class="stat-value">{{ overview.totalCourses || 0 }}</div>
               <div class="stat-label">开设课程数</div>
@@ -37,7 +37,7 @@
       <el-col :span="6">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
-            <div class="stat-icon" style="background: #F56C6C;"><el-icon :size="36"><TrendCharts /></el-icon></el-icon>
+            <div class="stat-icon" style="background: #F56C6C;"><el-icon :size="36"><TrendCharts /></el-icon></div>
             <div class="stat-info">
               <div class="stat-value">{{ overview.totalRecords || 0 }}</div>
               <div class="stat-label">授课记录数</div>

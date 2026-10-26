@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AolCourseCommitteeMapper">
+
+    <resultMap type="AolCourseCommittee" id="AolCourseCommitteeResult">
+        <result property="committeeId"    column="committee_id"    />
+        <result property="programId"      column="program_id"      />
+        <result property="mapCourseId"    column="map_course_id"   />
+        <result property="professorId"    column="professor_id"    />
+        <result property="memberOrder"    column="member_order"    />
+        <result property="professorName"  column="professor_name"  />
+        <result property="cdutId"         column="cdut_id"         />
+        <result property="courseName"     column="course_name"     />
+    </resultMap>
+
+    <sql id="selectAolCourseCommitteeVo">
+        select c.committee_id, c.program_id, c.map_course_id, c.professor_id, c.member_order,
+               p.name as professor_name, v.cdut_id, m.course_name
+        from aol_course_committee c
+        left join ms_professor p on p.professor_id = c.professor_id
+        left join ms_cv_profile v on v.professor_id = c.professor_id
+        left join aol_map_course m on m.map_course_id = c.map_course_id
+    </sql>
+
+    <select id="selectAolCourseCommitteeList" parameterType="AolCourseCommittee" resultMap="AolCourseCommitteeResult">
+        <include refid="selectAolCourseCommitteeVo"/>
+        <where>
+            <if test="programId != null"> and c.program_id = #{programId}</if>
+            <if test="mapCourseId != null"> and c.map_course_id = #{mapCourseId}</if>
+            <if test="professorId != null"> and c.professor_id = #{professorId}</if>
+        </where>
+        order by m.sort_order asc, c.map_course_id asc, c.member_order asc
+    </select>
+
+    <select id="selectAolCourseCommitteeByCommitteeId" parameterType="Long" resultMap="AolCourseCommitteeResult">
+        <include refid="selectAolCourseCommitteeVo"/>
+        where c.committee_id = #{committeeId}
+    </select>
+
+    <select id="selectTeacherOptions" resultType="java.util.Map">
+        select p.professor_id as "professorId", p.name as "name", v.cdut_id as "cdutId"
+        from ms_professor p
+        left join ms_cv_profile v on v.professor_id = p.professor_id
+        where p.status = '0'
+        order by p.name asc
+    </select>
+
+    <insert id="insertAolCourseCommittee" parameterType="AolCourseCommittee" useGeneratedKeys="true" keyProperty="committeeId">
+        insert into aol_course_committee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="programId != null">program_id,</if>
+            <if test="mapCourseId != null">map_course_id,</if>
+            <if test="professorId != null">professor_id,</if>
+            <if test="memberOrder != null">member_order,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="programId != null">#{programId},</if>
+            <if test="mapCourseId != null">#{mapCourseId},</if>
+            <if test="professorId != null">#{professorId},</if>
+            <if test="memberOrder != null">#{memberOrder},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAolCourseCommittee" parameterType="AolCourseCommittee">
+        update aol_course_committee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="programId != null">program_id = #{programId},</if>
+            <if test="mapCourseId != null">map_course_id = #{mapCourseId},</if>
+            <if test="professorId != null">professor_id = #{professorId},</if>
+            <if test="memberOrder != null">member_order = #{memberOrder},</if>
+        </trim>
+        where committee_id = #{committeeId}
+    </update>
+
+    <delete id="deleteAolCourseCommitteeByCommitteeId" parameterType="Long">
+        delete from aol_course_committee where committee_id = #{committeeId}
+    </delete>
+
+    <delete id="deleteAolCourseCommitteeByCommitteeIds" parameterType="String">
+        delete from aol_course_committee where committee_id in
+        <foreach item="committeeId" collection="array" open="(" separator="," close=")">
+            #{committeeId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAolCourseCommitteeByMapCourseIds" parameterType="String">
+        delete from aol_course_committee where map_course_id in
+        <foreach item="mapCourseId" collection="array" open="(" separator="," close=")">
+            #{mapCourseId}
+        </foreach>
+    </delete>
+
+</mapper>

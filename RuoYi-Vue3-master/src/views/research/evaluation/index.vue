@@ -12,7 +12,7 @@
       <el-col :span="8">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
-            <div class="stat-icon" style="background: #409EFF;"><el-icon :size="32"><DataAnalysis /></el-icon></el-icon>
+            <div class="stat-icon" style="background: #409EFF;"><el-icon :size="32"><DataAnalysis /></el-icon></div>
             <div class="stat-info">
               <div class="stat-value">{{ result.totalStudentCredits || 0 }}</div>
               <div class="stat-label">全体学生总学分</div>
@@ -23,7 +23,7 @@
       <el-col :span="8">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
-            <div class="stat-icon" style="background: #67C23A;"><el-icon :size="32"><Medal /></el-icon></el-icon>
+            <div class="stat-icon" style="background: #67C23A;"><el-icon :size="32"><Medal /></el-icon></div>
             <div class="stat-info">
               <div class="stat-value">{{ result.qualifiedCount || 0 }}</div>
               <div class="stat-label">合格研究型学者数</div>
@@ -34,7 +34,7 @@
       <el-col :span="8">
         <el-card class="stat-card" shadow="hover">
           <div class="stat-content">
-            <div class="stat-icon" style="background: #F56C6C;"><el-icon :size="32"><Warning /></el-icon></el-icon>
+            <div class="stat-icon" style="background: #F56C6C;"><el-icon :size="32"><Warning /></el-icon></div>
             <div class="stat-info">
               <div class="stat-value">{{ (result.totalCount || 0) - (result.qualifiedCount || 0) }}</div>
               <div class="stat-label">未达标教授数</div>

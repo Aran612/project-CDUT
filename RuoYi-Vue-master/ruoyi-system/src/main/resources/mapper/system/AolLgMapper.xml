@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AolLgMapper">
+
+    <resultMap type="AolLg" id="AolLgResult">
+        <result property="lgId"           column="lg_id"           />
+        <result property="cgId"           column="cg_id"           />
+        <result property="lgCode"         column="lg_code"         />
+        <result property="description"    column="description"     />
+        <result property="descriptionEn"  column="description_en"  />
+        <result property="bloomLevel"     column="bloom_level"     />
+        <result property="bloomVerbs"     column="bloom_verbs"     />
+        <result property="sortOrder"      column="sort_order"      />
+        <result property="status"         column="status"          />
+        <result property="createBy"       column="create_by"       />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateBy"       column="update_by"       />
+        <result property="updateTime"     column="update_time"     />
+        <result property="remark"         column="remark"          />
+    </resultMap>
+
+    <sql id="selectAolLgVo">
+        select lg_id, cg_id, lg_code, description, description_en, bloom_level, bloom_verbs, sort_order, status, create_by, create_time, update_by, update_time, remark
+        from aol_lg
+    </sql>
+
+    <select id="selectAolLgList" parameterType="AolLg" resultMap="AolLgResult">
+        <include refid="selectAolLgVo"/>
+        <where>
+            <if test="cgId != null"> and cg_id = #{cgId}</if>
+            <if test="lgCode != null  and lgCode != ''"> and lg_code = #{lgCode}</if>
+            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
+            <if test="bloomLevel != null  and bloomLevel != ''"> and bloom_level = #{bloomLevel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by sort_order asc, lg_id asc
+    </select>
+
+    <select id="selectAolLgByLgId" parameterType="Long" resultMap="AolLgResult">
+        <include refid="selectAolLgVo"/>
+        where lg_id = #{lgId}
+    </select>
+
+    <insert id="insertAolLg" parameterType="AolLg" useGeneratedKeys="true" keyProperty="lgId">
+        insert into aol_lg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cgId != null">cg_id,</if>
+            <if test="lgCode != null and lgCode != ''">lg_code,</if>
+            <if test="description != null">description,</if>
+            <if test="descriptionEn != null">description_en,</if>
+            <if test="bloomLevel != null">bloom_level,</if>
+            <if test="bloomVerbs != null">bloom_verbs,</if>
+            <if test="sortOrder != null">sort_order,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cgId != null">#{cgId},</if>
+            <if test="lgCode != null and lgCode != ''">#{lgCode},</if>
+            <if test="description != null">#{description},</if>
+            <if test="descriptionEn != null">#{descriptionEn},</if>
+            <if test="bloomLevel != null">#{bloomLevel},</if>
+            <if test="bloomVerbs != null">#{bloomVerbs},</if>
+            <if test="sortOrder != null">#{sortOrder},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAolLg" parameterType="AolLg">
+        update aol_lg
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cgId != null">cg_id = #{cgId},</if>
+            <if test="lgCode != null and lgCode != ''">lg_code = #{lgCode},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="descriptionEn != null">description_en = #{descriptionEn},</if>
+            <if test="bloomLevel != null">bloom_level = #{bloomLevel},</if>
+            <if test="bloomVerbs != null">bloom_verbs = #{bloomVerbs},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where lg_id = #{lgId}
+    </update>
+
+    <delete id="deleteAolLgByLgId" parameterType="Long">
+        delete from aol_lg where lg_id = #{lgId}
+    </delete>
+
+    <delete id="deleteAolLgByLgIds" parameterType="String">
+        delete from aol_lg where lg_id in
+        <foreach item="lgId" collection="array" open="(" separator="," close=")">
+            #{lgId}
+        </foreach>
+    </delete>
+
+</mapper>

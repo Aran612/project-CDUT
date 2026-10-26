@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AolMapCellMapper">
+
+    <resultMap type="AolMapCell" id="AolMapCellResult">
+        <result property="cellId"         column="cell_id"         />
+        <result property="mapCourseId"    column="map_course_id"   />
+        <result property="lgId"           column="lg_id"           />
+        <result property="coverageLevel"  column="coverage_level"  />
+    </resultMap>
+
+    <sql id="selectAolMapCellVo">
+        select cell_id, map_course_id, lg_id, coverage_level
+        from aol_map_cell
+    </sql>
+
+    <select id="selectAolMapCellsByMapCourseId" parameterType="Long" resultMap="AolMapCellResult">
+        <include refid="selectAolMapCellVo"/>
+        where map_course_id = #{mapCourseId}
+    </select>
+
+    <insert id="insertAolMapCell" parameterType="AolMapCell" useGeneratedKeys="true" keyProperty="cellId">
+        insert into aol_map_cell
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mapCourseId != null">map_course_id,</if>
+            <if test="lgId != null">lg_id,</if>
+            <if test="coverageLevel != null and coverageLevel != ''">coverage_level,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mapCourseId != null">#{mapCourseId},</if>
+            <if test="lgId != null">#{lgId},</if>
+            <if test="coverageLevel != null and coverageLevel != ''">#{coverageLevel},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertAolMapCells" parameterType="java.util.List">
+        insert into aol_map_cell (map_course_id, lg_id, coverage_level) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.mapCourseId}, #{item.lgId}, #{item.coverageLevel})
+        </foreach>
+    </insert>
+
+    <delete id="deleteAolMapCellsByMapCourseId" parameterType="Long">
+        delete from aol_map_cell where map_course_id = #{mapCourseId}
+    </delete>
+
+    <delete id="deleteAolMapCellsByMapCourseIds" parameterType="String">
+        delete from aol_map_cell where map_course_id in
+        <foreach item="mapCourseId" collection="array" open="(" separator="," close=")">
+            #{mapCourseId}
+        </foreach>
+    </delete>
+
+</mapper>
